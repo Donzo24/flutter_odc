@@ -25,6 +25,7 @@ class _HomePageState extends State<HomePage>
   PagingController<int, User> pagingController = PagingController(firstPageKey: 1);
 
   var _formKey = new GlobalKey<FormBuilderState>();
+  var _formUpdaeKey = new GlobalKey<FormBuilderState>();
 
   List messages = [];
   double fontSize = 16;
@@ -66,6 +67,7 @@ class _HomePageState extends State<HomePage>
   }
 
   void getUsersList({int page = 1}) {
+    print("HSJS");
     getUsers(page: page, pagingController: pagingController);
   }
 
@@ -78,10 +80,101 @@ class _HomePageState extends State<HomePage>
   void getUserList() {
     widget.database.utilisateurDao.findAllUser().then((value) {
       setState(() {
-        
         utilisateurs = value;
       });
     });
+  }
+
+  void updateUser({required Utilisateur user}) {
+    
+    Get.bottomSheet(
+            Container(
+              height: MediaQuery.of(context).size.height/2,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20)
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        backgroundImage: AssetImage("assets/images/google.png"),
+                      ),
+                      title: Text("Mise a jour d'un utilisateur"),
+                      subtitle: Text("Formulaire de mise a jour"),
+                    ),
+                    FormBuilder(
+                      key: _formUpdaeKey,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(10),
+                            child: FormBuilderTextField(
+                              name: "nom",
+                              initialValue: user.nom,
+                              decoration: InputDecoration(
+                                labelText: "Nom de famille",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5)
+                                )
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(10),
+                            child: FormBuilderTextField(
+                              name: "prenom",
+                              initialValue: user.prenom,
+                              decoration: InputDecoration(
+                                labelText: "Prenom",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5)
+                                )
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(10),
+                            child: GFButton(
+                              text: "Sauvergarder",
+                              color: Colors.orange,
+                              size: GFSize.LARGE,
+                              fullWidthButton: true,
+                              shape: GFButtonShape.pills,
+                              onPressed: () async {
+
+                                if(_formUpdaeKey.currentState!.saveAndValidate()) {
+
+                                  int id = await widget.database.utilisateurDao.updateUtilisateur(
+                                    Utilisateur(
+                                      id: user.id,
+                                      nom: _formUpdaeKey.currentState!.value['nom'], 
+                                      prenom:  _formUpdaeKey.currentState!.value['prenom'],
+                                      telephone: "666666666"
+                                    )
+                                  );
+
+                                  // Get.back();
+                                  setState(() {});
+
+                                  Get.snackbar("Success", "Succees");
+                                }
+                                
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+                
+              )
+            )
+          );
   }
 
   @override
@@ -221,15 +314,15 @@ class _HomePageState extends State<HomePage>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Container(
-            //   height: 180,
-            //   child: ListView(
-            //     scrollDirection: Axis.horizontal,
-            //     children: List.generate(users.length, (index) {
-            //       return createAvatar(user: users[index]);
-            //     }),
-            //   ),
-            // ),
+            Container(
+              height: 180,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: List.generate(users.length, (index) {
+                  return createAvatar(user: users[index]);
+                }),
+              ),
+            ),
             // Container(
             //   height: 180,
             //   child: PagedListView(
@@ -269,7 +362,22 @@ class _HomePageState extends State<HomePage>
                   return ListView(
                     shrinkWrap: true,
                     children: users.map((user) {
-                        return createUserUi(user: user);
+                        return Dismissible(
+                          key: Key(user.id.toString()), 
+                          child: createUserUi(user: user),
+                          background: Icon(Icons.delete),
+                          onDismissed: (direction) async {
+
+                            users.remove(user);
+                            await widget.database.utilisateurDao.deleteUtilisateur(user);
+
+                            setState(() { });
+                            
+                          },
+                          // confirmDismiss: (direction) {
+                          //   return true;
+                          // },
+                        );
                     }).toList(),
                   );
 
@@ -368,48 +476,40 @@ class _HomePageState extends State<HomePage>
   Widget createUserUi({required Utilisateur user}) {
 
     return Padding(
-      padding: EdgeInsets.all(10),
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(5),
-            child: Stack(
-              children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundImage: AssetImage("assets/users/avatar-8.jpg"),
-                ),
-                true ? Positioned(
-                  child: Container(
-                    height: 22,
-                    width: 22,
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.all(Radius.circular(20))
-                    ),
-                  )
-                ):const SizedBox(),
-                true ? Positioned(
-                  child: Container(
-                    height: 20,
-                    width: 20,
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.all(Radius.circular(20))
-                    ),
-                  )
-                ):const SizedBox()
-              ],
-            ),
+      padding: EdgeInsets.only(
+        bottom: 5,
+        left: 8,
+        right: 8
+      ),
+      child: ListTile(
+        textColor: Colors.white,
+        title: Text(
+          "${user.prenom} ${user.nom}",
+          style: TextStyle(
+            fontWeight: FontWeight.bold
           ),
-          Text(
-            user.prenom,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18
-            ),
-          )
-        ],
+        ),
+        subtitle: Text(
+          user.telephone
+        ),
+        leading: GestureDetector(
+          onTap: () {
+            setState(() {
+              fontSize = fontSize+4;
+            });
+          },
+          child: CircleAvatar(
+            radius: 30,
+            backgroundImage: AssetImage("assets/users/avatar-8.jpg"),
+          ),
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.edit),
+          color: Colors.white,
+          onPressed: () {
+            updateUser(user: user);
+          },
+        )
       ),
     );
   }

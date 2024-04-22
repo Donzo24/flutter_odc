@@ -29,6 +29,8 @@ class User {
 Future<void> getUsers({int page = 1, required PagingController<int, User> pagingController}) async {
   List<User> users = [];
 
+  print("HSHS");
+
   http.Response response = await http.get(Uri.parse("https://reqres.in/api/users?page=$page&per_page=4"));
 
   if(response.statusCode == 200) {
