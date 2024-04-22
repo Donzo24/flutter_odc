@@ -365,7 +365,24 @@ class _HomePageState extends State<HomePage>
                         return Dismissible(
                           key: Key(user.id.toString()), 
                           child: createUserUi(user: user),
-                          background: Icon(Icons.delete),
+                          background: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                color: Colors.red,
+                                height: double.infinity,
+                                width: MediaQuery.of(context).size.height/5,
+                                child: Icon(Icons.delete),
+                              ),
+                              Container(
+                                color: Colors.green,
+                                height: double.infinity,
+                                width: MediaQuery.of(context).size.height/5,
+                                child: Icon(Icons.archive)
+                              )
+                            ],
+                          ),
+
                           onDismissed: (direction) async {
 
                             users.remove(user);
