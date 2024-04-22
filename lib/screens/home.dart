@@ -253,10 +253,9 @@ class _HomePageState extends State<HomePage>
                                     )
                                   );
 
-                                  // Get.back();
-                                  setState(() {
-                                    
-                                  });
+                                  _formKey.currentState!.reset();
+                                  Get.back();
+                                  setState(() {});
 
                                   Get.snackbar("Success", "Succees");
                                 }
