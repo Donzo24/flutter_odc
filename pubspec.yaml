@@ -44,6 +44,7 @@ dependencies:
   infinite_scroll_pagination: ^4.0.0
   dio: ^5.4.3+1
   floor: ^1.4.0
+  animate_do: ^3.3.4
 dependency_overrides:
   intl: ^0.17.0
 

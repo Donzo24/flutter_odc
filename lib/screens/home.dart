@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/database.dart';
 import 'package:flutter_application_1/entity/user_entity.dart';
@@ -67,7 +68,7 @@ class _HomePageState extends State<HomePage>
   }
 
   void getUsersList({int page = 1}) {
-    print("HSJS");
+    
     getUsers(page: page, pagingController: pagingController);
   }
 
@@ -309,31 +310,42 @@ class _HomePageState extends State<HomePage>
           ),
         ),
       ),
+      
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 180,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: List.generate(users.length, (index) {
-                  return createAvatar(user: users[index]);
-                }),
-              ),
-            ),
             // Container(
             //   height: 180,
-            //   child: PagedListView(
+            //   child: ListView(
             //     scrollDirection: Axis.horizontal,
-            //     pagingController: pagingController,
-            //     builderDelegate: PagedChildBuilderDelegate<User>(
-            //       itemBuilder: (context, item, index) {
-            //         return createAvatar(user: item);
-            //       },
-            //     ),
+            //     children: List.generate(users.length, (index) {
+            //       return createAvatar(user: users[index]);
+            //     }),
             //   ),
             // ),
+            Container(
+              height: 180,
+              child: PagedListView(
+                scrollDirection: Axis.horizontal,
+                pagingController: pagingController,
+                builderDelegate: PagedChildBuilderDelegate<User>(
+                  firstPageProgressIndicatorBuilder: (context) {
+                    //return createAvatarPlaceholder();
+
+                    return Row(
+                      children: List.generate(6, (index) {
+                        return createAvatarPlaceholder();
+                      })
+                    );
+                    
+                  },
+                  itemBuilder: (context, item, index) {
+                    return createAvatar(user: item);
+                  },
+                ),
+              ),
+            ),
             Padding(
               padding: EdgeInsets.all(10),
               child: Text(
@@ -361,7 +373,8 @@ class _HomePageState extends State<HomePage>
                   return ListView(
                     shrinkWrap: true,
                     children: users.map((user) {
-                        return Dismissible(
+                        return FadeInUpBig(
+                          child: Dismissible(
                           key: Key(user.id.toString()), 
                           child: createUserUi(user: user),
                           background: Row(
@@ -393,6 +406,7 @@ class _HomePageState extends State<HomePage>
                           // confirmDismiss: (direction) {
                           //   return true;
                           // },
+                        ),
                         );
                     }).toList(),
                   );
@@ -574,6 +588,64 @@ class _HomePageState extends State<HomePage>
               color: Colors.white,
               fontSize: 18
             ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget createAvatarPlaceholder() {
+
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.all(5),
+            child: Stack(
+              children: [
+                CircleAvatar(
+                  radius: 40,
+                  child: GFShimmer(
+                    showGradient: true,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.topRight,
+                      colors: [
+                        Colors.black,
+                        Colors.yellow,
+                        Colors.green
+                      ]
+                    ),
+                    child: SizedBox()
+                  ),
+                ),
+                true ? Positioned(
+                  child: Container(
+                    height: 22,
+                    width: 22,
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.all(Radius.circular(20))
+                    ),
+                  )
+                ):const SizedBox(),
+                true ? Positioned(
+                  child: Container(
+                    height: 20,
+                    width: 20,
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.all(Radius.circular(20))
+                    ),
+                  )
+                ):const SizedBox()
+              ],
+            ),
+          ),
+          Container(
+            height: 10,
+            color: Colors.red,
           )
         ],
       ),
