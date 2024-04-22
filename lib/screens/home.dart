@@ -310,7 +310,6 @@ class _HomePageState extends State<HomePage>
           ),
         ),
       ),
-      
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

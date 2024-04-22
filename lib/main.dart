@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/entity/user_entity.dart';
 import 'package:flutter_application_1/screens/home.dart';
 import 'package:flutter_application_1/screens/login.dart';
+import 'package:flutter_application_1/screens/nav/index.dart';
 import 'package:form_builder_validators/localization/l10n.dart';
 import 'package:get/get.dart';
 import 'database.dart';
@@ -33,7 +34,7 @@ class MyFirstApp extends StatelessWidget {
     return GetMaterialApp(
       navigatorKey: Get.key,
       title: "ODC APP",
-      home: HomePage(database: database),
+      home: IndexPage(),
       localizationsDelegates: [
         FormBuilderLocalizations.delegate,
       ],
