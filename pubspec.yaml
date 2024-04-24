@@ -45,6 +45,7 @@ dependencies:
   dio: ^5.4.3+1
   floor: ^1.4.0
   animate_do: ^3.3.4
+  image_picker: ^1.0.8
 dependency_overrides:
   intl: ^0.17.0
 

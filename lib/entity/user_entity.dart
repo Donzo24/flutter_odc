@@ -14,3 +14,24 @@ class Utilisateur {
 
   Utilisateur({this.id, required this.nom, required this.prenom, required this.telephone});
 }
+
+@Entity(
+  tableName: "post",
+  foreignKeys: [
+    ForeignKey(
+      childColumns: ["utilisateur_id"], 
+      parentColumns: ["id"], 
+      entity: Utilisateur
+    )
+  ]
+)
+class Post {
+
+  @PrimaryKey(autoGenerate: true)
+  int? id;
+  String titre;
+
+  int utilisateurId;
+
+  Post({this.id, required this.titre, required this.utilisateurId});
+}

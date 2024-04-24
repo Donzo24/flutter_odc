@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/database.dart';
@@ -7,6 +9,7 @@ import 'package:flutter_application_1/screens/message.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get/route_manager.dart';
 import 'package:getwidget/getwidget.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class HomePage extends StatefulWidget {
@@ -30,6 +33,8 @@ class _HomePageState extends State<HomePage>
 
   List messages = [];
   double fontSize = 16;
+
+  File? image;
 
   List<Utilisateur> utilisateurs = [];
 
@@ -70,6 +75,18 @@ class _HomePageState extends State<HomePage>
   void getUsersList({int page = 1}) {
     
     getUsers(page: page, pagingController: pagingController);
+  }
+
+  void captureImage({required Function state}) async {
+    var imagePicker = ImagePicker();
+
+    var image = await imagePicker.pickImage(source: ImageSource.camera);
+
+    state(() {
+      this.image = File(image!.path);
+    });
+
+    // print(image);
   }
 
   @override
@@ -188,8 +205,10 @@ class _HomePageState extends State<HomePage>
         onPressed: () {
 
           Get.bottomSheet(
-            Container(
-              height: MediaQuery.of(context).size.height/2,
+            StatefulBuilder(
+              builder: (context, state) {
+                return Container(
+              height: MediaQuery.of(context).size.height/1.3,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20)
@@ -205,6 +224,23 @@ class _HomePageState extends State<HomePage>
                       ),
                       title: Text("Ajout d'un utilisateur"),
                       subtitle: Text("Formulaire d'enregistrement"),
+                    ),
+                    Center(
+                      child: image == null ? CircleAvatar(
+                        radius: 45,
+                        backgroundColor: Colors.transparent,
+                        child: IconButton(
+                          icon: Icon(Icons.camera, size: 45),
+                          color: Colors.green,
+                          onPressed: () => captureImage(
+                            state: state
+                          ),
+                        ),
+                      ):Image.file(
+                        image!,
+                        height: 100,
+                        width: 100,
+                      ),
                     ),
                     FormBuilder(
                       key: _formKey,
@@ -271,6 +307,8 @@ class _HomePageState extends State<HomePage>
                 ),
                 
               )
+            );
+              }
             )
           );
           

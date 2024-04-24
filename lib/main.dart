@@ -34,7 +34,7 @@ class MyFirstApp extends StatelessWidget {
     return GetMaterialApp(
       navigatorKey: Get.key,
       title: "ODC APP",
-      home: IndexPage(),
+      home: HomePage(database: database),
       localizationsDelegates: [
         FormBuilderLocalizations.delegate,
       ],
