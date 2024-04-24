@@ -41,13 +41,55 @@ class _IndexPageState extends State<IndexPage>
     super.dispose();
   }
 
+  Widget createDrawerItem({required IconData icon, required String titre}) {
+    return Padding(
+      padding: EdgeInsets.all(8),
+      child: ListTile(
+        leading: Icon(icon),
+        title: Text(
+          titre,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: Column(
+          children: [
+            DrawerHeader(
+              child: Container(
+                height: 100,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: AssetImage("assets/images/image.jpg")
+                  )
+                ),
+              )
+            ),
+            createDrawerItem(
+              icon: Icons.settings,
+              titre: "Parametres hsjsjsjskkskslslslsllslsllslslsllslsllslslsl"
+            ),
+            createDrawerItem(
+              icon: Icons.lan, 
+              titre: "Langue"
+            ),
+            Divider()
+          ],
+        ),
+      ),
       appBar: AppBar(
         title: Text(titre),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.orange,
         child: Icon(Icons.add),
         onPressed: () {
 
@@ -56,66 +98,48 @@ class _IndexPageState extends State<IndexPage>
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: BottomAppBar(
-        color: Colors.yellow,
-            shape: const CircularNotchedRectangle(),
-            notchMargin: 8,
-            clipBehavior: Clip.antiAlias,
-        child: Container(
-          decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: [
-                            Colors.yellow,
-                            Colors.yellow,
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter
-                    )
-                ),
-          child: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: currentPage,
-        backgroundColor: Colors.transparent,
-        onTap: (index) {
-          setState(() {
-            currentPage = index;
+        color: Colors.orange,
+          shape: const CircularNotchedRectangle(),
+          notchMargin: 8,
+          clipBehavior: Clip.antiAlias,
 
-            switch (index) {
-              case 0:
-                titre = "Home";
-                break;
-              case 1:
-                titre = "News";
-                break;
-              case 2:
-                titre = "Profil";
-              default:
-            }
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "Home"
+        child: Container(
+          color: Colors.orange,
+          child: BottomNavigationBar(
+            backgroundColor: Colors.transparent,
+            type: BottomNavigationBarType.fixed,
+            currentIndex: currentPage,
+            onTap: (index) {
+              setState(() {
+                currentPage = index;
+              });
+            },
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: "Home"
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.newspaper),
+                label: "News"
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: "Compte"
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.lock),
+                label: "Profil"
+              )
+            ]
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.newspaper),
-            label: "News"
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.lock),
-            label: "Profil"
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.lock),
-            label: "Profil"
-          )
-        ]
-      ),
         ),
       ),
-      body: IndexedStack(
-        index: currentPage,
-        children: widgets,
+      body: SafeArea(
+        child: IndexedStack(
+          index: currentPage,
+          children: widgets,
+        )
       )
     );
   }
